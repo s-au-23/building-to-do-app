@@ -34,38 +34,21 @@ def home():
 
 @app.route('/test-db')
 def test_db():
-    """
-    Test route to verify database is working.
-    Creates a test user and todo if they don't exist.
-    """
-    # Check if test user exists
-    user = User.query.filter_by(username='testuser').first()
-    print(user)
-
-    if not user:
-        # Create test user
-        user = User(
-            username='testuser',
-            email='test@example.com',
-            password_hash='temporary'
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        # Create test todo
-        todo = Todo(
-            task_content='Learn SQLAlchemy',
-            user_id=user.id
-        )
-        db.session.add(todo)
-        db.session.commit()
-
-    # Get all users and todos for display
+    
+    # 1. Get all users (returns a list)
     all_users = User.query.all()
-    all_todos = Todo.query.all()
+    print(f"Total users: {len(all_users)}")
 
-    return render_template('test_db.html', users=all_users, todos=all_todos)
+    # 2. Get the first user (returns one object or None)
+    first_user = User.query.first()
+    print(f"First user is: {first_user.username if first_user else 'None'}")
 
+    # 3. Count users (returns an integer)
+    user_count = User.query.count()
+    print(f"Database count: {user_count}")
+    
+    
+    return render_template('test_db.html', users=all_users, todos=Todo.query.all())
 
 # =============================================================================
 # RUN THE SERVER
