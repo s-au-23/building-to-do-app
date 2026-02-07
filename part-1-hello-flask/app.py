@@ -30,6 +30,10 @@ def home():
 def about():
     """About page - information about the app"""
     return render_template('about.html')
+@app.route('/services')
+def services():
+    """Services page - list of services offered"""
+    return render_template('services.html') 
 
 
 @app.route('/contact')
