@@ -45,37 +45,32 @@ def users_page():
 # =============================================================================
 # API ROUTES
 # =============================================================================
-
 @app.route('/api/register', methods=['POST'])
 def api_register():
-    """
-    Register a new user.
-
-    Receives JSON: { "username": "...", "email": "...", "password": "..." }
-    """
     data = request.get_json()
-    print(data)
 
-    # Validate input
     if not data:
         return jsonify({'error': 'No data provided'}), 400
 
-    username = data.get('username',None)
-    print(username)
-    email = data.get('email', None)
-    print(email)
-    password = data.get('password', None)
-    print(password)
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
 
-    if not username:
-        print('username is missing')
-        return jsonify({'error': 'Username is required'}), 400
-    if not email:
-        print('email is missing')
-        return jsonify({'error': 'Email is required'}), 400
-    if not password:
-        print('password is missing')
-        return jsonify({'error': 'Password is required'}), 400
+    # Basic presence validation (already in your code)
+    if not username or not email or not password:
+        return jsonify({'error': 'All fields are required'}), 400
+
+    # ACTIVITY 1: Password length check
+    if len(password) < 6:
+        return jsonify({'error': 'Password must be at least 6 characters long'}), 400
+
+    # ACTIVITY 2: Username alphanumeric check
+    if not username.isalnum():
+        return jsonify({'error': 'Username must only contain letters and numbers'}), 400
+
+    # ACTIVITY 4: Email format check
+    if "@" not in email:
+        return jsonify({'error': 'Invalid email format (missing @ symbol)'}), 400
 
     # Check if user already exists
     if User.query.filter_by(email=email).first():
@@ -85,19 +80,16 @@ def api_register():
         return jsonify({'error': 'Username already taken'}), 400
 
     # Create new user
-    # NOTE: We're storing password directly here (NOT secure!)
-    # We'll add proper password hashing in Part 4
     new_user = User(
         username=username,
         email=email,
-        password_hash=password  # This will be fixed in Part 4
+        password_hash=password 
     )
 
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({'message': 'Registration successful!'}), 201
-
 
 # =============================================================================
 # RUN THE SERVER
